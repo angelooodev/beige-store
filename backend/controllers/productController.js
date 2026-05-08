@@ -8,10 +8,13 @@ exports.getProducts = async (req, res) => {
 
 // Create a single product manually (No image upload, just URL)
 exports.createProduct = async (req, res) => {
-  const { name, description, price, stock, imageUrl } = req.body;
-  const product = new Product({ name, description, price, stock, imageUrl });
-  const createdProduct = await product.save();
-  res.status(201).json(createdProduct);
+  try {
+    const { name, price, description, imageUrl, stock } = req.body;
+    const product = await Product.create({ name, price, description, imageUrl, stock });
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating product' });
+  }
 };
 
 // SEED ROUTE: Premium Hardcoded Coffee Data
@@ -82,5 +85,41 @@ exports.deleteProduct = async (req, res) => {
     res.json({ message: 'Product removed successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Failed to delete product', error: error.message });
+  }
+};
+
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+exports.updateProduct = async (req, res) => {
+  try {
+    const { name, price, description, imageUrl, stock } = req.body;
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      product.name = name || product.name;
+      product.price = price || product.price;
+      product.description = description || product.description;
+      product.imageUrl = imageUrl || product.imageUrl;
+      product.stock = stock || product.stock;
+
+      const updatedProduct = await product.save();
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update product', error: error.message });
+  }
+};
+
+// Ensure deleteProduct is also exported here if it wasn't already
+exports.deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndDelete(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.json({ message: 'Product removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };

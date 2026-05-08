@@ -31,8 +31,6 @@ export default function ManageProducts() {
       try {
         const config = { headers: { Authorization: `Bearer ${user.token}` } };
         await axios.delete(`${API_URL}/products/${id}`, config);
-        
-        // Remove the deleted product from the screen without reloading
         setProducts(products.filter(product => product._id !== id));
       } catch (error) {
         console.error("Failed to delete product");
@@ -45,7 +43,6 @@ export default function ManageProducts() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-bold text-olive-accent hover:text-mocha-dark transition-colors mb-2 uppercase tracking-wider">
@@ -53,12 +50,13 @@ export default function ManageProducts() {
           </Link>
           <h1 className="text-3xl font-black">Manage Gear</h1>
         </div>
-        <button className="inline-flex items-center gap-2 bg-olive-accent text-white font-bold px-4 py-2 rounded-xl hover:bg-mocha-light transition-colors shadow-sm">
+        
+        {/* FIXED: Add Product is now a Link! */}
+        <Link to="/admin/products/add" className="inline-flex items-center gap-2 bg-olive-accent text-white font-bold px-4 py-2 rounded-xl hover:bg-mocha-light transition-colors shadow-sm">
           <Plus className="w-5 h-5" /> Add Product
-        </button>
+        </Link>
       </div>
 
-      {/* Table Container */}
       <div className="bg-white/60 dark:bg-mocha-base/50 backdrop-blur border border-olive-accent/20 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -95,14 +93,13 @@ export default function ManageProducts() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 rounded-lg text-blue-500 hover:bg-blue-500/10 transition-colors" title="Edit">
+                        
+                        {/* FIXED: Edit is now a Link passing the product ID! */}
+                        <Link to={`/admin/products/edit/${product._id}`} className="p-2 rounded-lg text-blue-500 hover:bg-blue-500/10 transition-colors" title="Edit">
                           <Edit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(product._id)}
-                          className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors" 
-                          title="Delete"
-                        >
+                        </Link>
+                        
+                        <button onClick={() => handleDelete(product._id)} className="p-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors" title="Delete">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

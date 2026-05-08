@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
-// Notice deleteProduct is imported right here:
-const { getProducts, createProduct, seedCoffeeProducts, deleteProduct } = require('../controllers/productController');
+const { 
+  getProducts, 
+  createProduct, 
+  seedCoffeeProducts, 
+  deleteProduct, 
+  updateProduct 
+} = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 // The seed route
@@ -14,6 +19,7 @@ router.route('/')
 
 // Delete a specific product by ID
 router.route('/:id')
-  .delete(protect, admin, deleteProduct);
+  .delete(protect, admin, deleteProduct)
+  .put(protect, admin, updateProduct);
 
 module.exports = router;

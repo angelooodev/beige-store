@@ -11,6 +11,8 @@ import ThankYou from './pages/ThankYou';
 import Dashboard from './pages/admin/Dashboard';
 import ManageProducts from './pages/admin/ManageProducts';
 import ManageOrders from './pages/admin/ManageOrders';
+import EditProduct from './pages/admin/EditProduct';
+import AddProduct from './pages/admin/AddProduct';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
                 <Route path="/thank-you/:orderId" element={<ThankYou />} />
                 <Route path="/admin/products" element={<ManageProducts />} />
                 <Route path="/admin/orders" element={<ManageOrders />} />
+                <Route path="/admin/products/edit/:id" element={<EditProduct />} />
+                <Route path="/admin/products/add" element={<AddProduct />} />
               </Routes>
             </main>
           </div>
