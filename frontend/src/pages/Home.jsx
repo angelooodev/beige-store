@@ -13,7 +13,7 @@ export default function Home() {
         const fetchProducts = async () => {
             try {
                 // Fetching from your Express backend!
-                const { data } = await axios.get('http://localhost:5000/api/products');
+                const { data } = await axios.get(`${API_URL}/products`);
                 setProducts(data);
                 setLoading(false);
             } catch (error) {

@@ -11,7 +11,13 @@ const orderSchema = new mongoose.Schema({
   shippingAddress: { type: String, required: true },
   paymentMethod: { type: String, default: 'GCash' },
   totalAmount: { type: Number, required: true },
-  status: { type: String, enum: ['pending', 'shipping', 'delivered', 'cancelled'], default: 'pending' }
+  
+  // UPDATED: Matched to the exact strings used in your React Admin Dashboard
+  status: { 
+    type: String, 
+    enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], 
+    default: 'Pending' 
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);

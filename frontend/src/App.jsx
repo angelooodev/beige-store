@@ -6,6 +6,11 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Checkout from './pages/Checkout';
+import ThankYou from './pages/ThankYou';
+import Dashboard from './pages/admin/Dashboard';
+import ManageProducts from './pages/admin/ManageProducts';
+import ManageOrders from './pages/admin/ManageOrders';
 
 function App() {
   return (
@@ -20,6 +25,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/admin" element={<Dashboard />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/thank-you/:orderId" element={<ThankYou />} />
+                <Route path="/admin/products" element={<ManageProducts />} />
+                <Route path="/admin/orders" element={<ManageOrders />} />
               </Routes>
             </main>
           </div>

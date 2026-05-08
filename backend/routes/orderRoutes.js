@@ -1,48 +1,23 @@
+// backend/routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
-const Product = require('../models/Product');
+// Import the functions we built in the controller!
+const { createOrder, getOrders, updateOrderStatus } = require('../controllers/orderController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// User creates an order
-router.post('/', protect, async (req, res) => {
-  const { orderItems, shippingAddress, totalAmount } = req.body;
+// @route   POST /api/orders (User creates an order)
+// @route   GET /api/orders (Admin gets all orders)
+router.route('/')
+  .post(protect, createOrder)
+  .get(protect, admin, getOrders);
 
-  if (orderItems && orderItems.length === 0) {
-    return res.status(400).json({ message: 'No order items' });
-  }
+// @route   PUT /api/orders/:id/status
+// @desc    Admin updates order status
+// @access  Private/Admin
+router.route('/:id/status')
+  .put(protect, admin, updateOrderStatus);
 
-  const order = new Order({
-    user: req.user._id,
-    orderItems,
-    shippingAddress,
-    totalAmount
-  });
-
-  const createdOrder = await order.save();
-
-  // Deduct stock
-  for (const item of orderItems) {
-    const product = await Product.findById(item.product);
-    if (product) {
-      product.stock -= item.qty;
-      await product.save();
-    }
-  }
-
-  res.status(201).json(createdOrder);
-});
-
-// User gets their own orders
-router.get('/myorders', protect, async (req, res) => {
-  const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
-  res.json(orders);
-});
-
-// Admin gets all orders
-router.get('/', protect, admin, async (req, res) => {
-  const orders = await Order.find({}).populate('user', 'id fname email').sort({ createdAt: -1 });
-  res.json(orders);
-});
+// We will add the /myorders route to the controller later when we build the user profile!
+// For now, these are the exact routes needed to make your Admin Dashboard work.
 
 module.exports = router;

@@ -1,13 +1,19 @@
 const express = require('express');
 const router = express.Router();
-const { getProducts, createProduct, seedCoffeeProducts } = require('../controllers/productController');
+// Notice deleteProduct is imported right here:
+const { getProducts, createProduct, seedCoffeeProducts, deleteProduct } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// The new seed route (run this once via Postman/browser to populate the DB)
+// The seed route
 router.post('/seed', seedCoffeeProducts);
 
+// Get all products and create a product
 router.route('/')
   .get(getProducts)
   .post(protect, admin, createProduct);
+
+// Delete a specific product by ID
+router.route('/:id')
+  .delete(protect, admin, deleteProduct);
 
 module.exports = router;

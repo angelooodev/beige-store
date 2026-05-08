@@ -20,8 +20,7 @@ export default function Register() {
     setError('');
 
     try {
-      const { data } = await axios.post(`${API_URL}/auth/login`, formData);
-
+      const { data } = await axios.post(`${API_URL}/auth/signup`, formData);
       login(data);
       navigate('/');
     } catch (err) {

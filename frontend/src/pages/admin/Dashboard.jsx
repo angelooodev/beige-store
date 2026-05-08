@@ -1,21 +1,61 @@
 // src/pages/admin/Dashboard.jsx
-import { Package, Users, ShoppingBag, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Package, Users, ShoppingBag, ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import axios from 'axios';
+import API_URL from '../../config';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const [stats, setStats] = useState({ products: 0, users: 0, orders: 0 });
+  const [loading, setLoading] = useState(true);
 
-  // We will wire these up to real backend endpoints later
-  const stats = [
-    { title: 'Total Products', value: '19', icon: Package, color: 'text-olive-accent', bg: 'bg-olive-accent/10' },
-    { title: 'Registered Users', value: '4', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { title: 'Total Orders', value: '12', icon: ShoppingBag, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-  ];
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // We must pass the admin's token to prove they are authorized
+        const config = { 
+          headers: { 
+            Authorization: `Bearer ${user.token}` 
+          } 
+        };
+        
+        const { data } = await axios.get(`${API_URL}/admin/stats`, config);
+        setStats(data);
+      } catch (err) {
+        console.error("Failed to fetch stats", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    // Only attempt to fetch if the user is actually an admin
+    if (user && user.isAdmin) {
+      fetchStats();
+    }
+  }, [user]);
+
+  // Security check: Kick out non-admins
   if (!user || !user.isAdmin) {
     return <div className="p-8 text-center text-red-500 font-bold">Access Denied. Admins only.</div>;
   }
+
+  // Show a spinner while the data is loading from the backend
+  if (loading) {
+    return (
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-olive-accent" />
+      </div>
+    );
+  }
+
+  // The dynamic data array
+  const statCards = [
+    { title: 'Total Products', value: stats.products, icon: Package, color: 'text-olive-accent', bg: 'bg-olive-accent/10' },
+    { title: 'Registered Users', value: stats.users, icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { title: 'Total Orders', value: stats.orders, icon: ShoppingBag, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -24,10 +64,10 @@ export default function Dashboard() {
         <h1 className="text-3xl font-black">Dashboard overview</h1>
       </div>
 
-      {/* Stats Grid */}
+      {/* Dynamic Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white/60 dark:bg-mocha-base/50 backdrop-blur border border-olive-accent/20 p-6 rounded-2xl shadow-sm flex flex-col justify-between">
+        {statCards.map((stat, idx) => (
+          <div key={idx} className="bg-white/60 dark:bg-mocha-base/50 backdrop-blur border border-olive-accent/20 p-6 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center mb-4">
               <span className="text-xs font-bold uppercase tracking-wider opacity-70">{stat.title}</span>
               <div className={`p-2 rounded-xl ${stat.bg} ${stat.color}`}>

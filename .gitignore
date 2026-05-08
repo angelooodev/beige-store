@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+*/node_modules/
+
+# Environment variables
+.env
+backend/.env
+frontend/.env
+
+# OS generated files
+.DS_Store
+*/.DS_Store
